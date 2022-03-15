@@ -1,0 +1,126 @@
+package connectfour
+
+var row = 6
+var column = 7
+
+fun main() {
+
+
+    val regex = Regex("""^\s*\d+\s*[xX]\s*\d+\s*$""")
+    println("Connect Four")
+    println("First player's name:")
+    val player1 = readln()
+    println("Second player's name:")
+    val player2 = readln()
+    createBoard(regex, player1, player2)
+    var board = MutableList(column) { MutableList(row) { ' ' } }
+    println("$row $column")
+    while (true) {
+        if (move(player1, 'o', board)) break
+        if (move(player2, '*', board)) break
+    }
+}
+
+private fun move(player: String, piece: Char, board: MutableList<MutableList<Char>>): Boolean {
+    var a = false
+    println("$player's turn")
+    while (true) {
+        val input = readln()
+        if (input == "end") {
+            a = true
+        } else if (input.contains("[0-$column]")) {
+            println("Incorrect column number")
+            continue
+        } else if (input.toInt() >= column + 1) {
+            print("The column number is out of range (1 -$column)")
+            continue
+        } else if (board[input.toInt() - 1].last() == 'o' || board[input.toInt() - 1].last() == '*') {
+            println("The column is full")
+            continue
+        } else {
+            for (i in 0 until board.size) {
+                for (j in 0 until board[i].size) {
+                    if (board[input.toInt() - 1][j] == ' ') {
+                        board[input.toInt() - 1][j] = piece;break
+
+                    }
+                }
+            }
+            println(board)
+        }
+        break
+    }
+
+    return a
+}
+
+private fun createBoard(
+    regex: Regex, player1: String, player2: String
+) {
+
+    while (true) {
+        println("Set the board dimensions (Rows x Columns)")
+        println("Press Enter for default (6 x 7)")
+        val line = readln()
+        if (line.isEmpty()) {
+        } else if (line == "end") {
+            break
+        } else {
+            val new = line.replace("\\s".toRegex(), "").toCharArray()
+            if (new.size > 3) {
+                val splitNumbers = line.replace("\\s".toRegex(), "").split("x")
+                if (!regex.matches(new.joinToString(""))) {
+                    print("Invalid input\n")
+                    continue
+                }
+                if (splitNumbers[0].toInt() > 9) {
+                    println("Board rows should be from 5 to 9")
+                } else if (splitNumbers[1].toInt() > 9) {
+                    println("Board columns should be from 5 to 9")
+                }
+                continue
+            }
+            if (regex.matches(new.joinToString(""))) {
+                row = new[0].digitToInt()
+                column = new[2].digitToInt()
+                if (row !in 5..9) {
+                    println("Board rows should be from 5 to 9")
+                    continue
+                } else if (column !in 5..9) {
+                    println("Board columns should be from 5 to 9")
+                    continue
+                }
+            } else {
+                print("Invalid input\n")
+                continue
+            }
+        }
+        printBoard(player1, player2)
+        break
+    }
+}
+
+private fun printBoard(name1: String, name2: String) {
+    println("$name1 VS $name2")
+    println("$row X $column board")
+    var count = 0
+    print(" ")
+    repeat(column) {
+        count++
+        print("$count ")
+    }
+    for (i in 1..row) {
+        println()
+        for (j in 0..column) {
+            print("║ ")
+        }
+
+
+    }
+    print("\n╚═")
+    repeat(column - 1) {
+        print("╩═")
+    }
+    print("╝\n")
+}
+
