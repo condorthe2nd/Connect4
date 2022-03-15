@@ -4,8 +4,6 @@ var row = 6
 var column = 7
 
 fun main() {
-
-
     val regex = Regex("""^\s*\d+\s*[xX]\s*\d+\s*$""")
     println("Connect Four")
     println("First player's name:")
@@ -14,7 +12,8 @@ fun main() {
     val player2 = readln()
     createBoard(regex, player1, player2)
     var board = MutableList(column) { MutableList(row) { ' ' } }
-    println("$row $column")
+    printBoard(player1, player2, board)
+    //println("$row $column")
     while (true) {
         if (move(player1, 'o', board)) break
         if (move(player2, '*', board)) break
@@ -26,23 +25,24 @@ private fun move(player: String, piece: Char, board: MutableList<MutableList<Cha
     println("$player's turn")
     while (true) {
         val input = readln()
+        val number = input.toInt()
         if (input == "end") {
             a = true
         } else if (input.contains("[0-$column]")) {
             println("Incorrect column number")
             continue
-        } else if (input.toInt() >= column + 1) {
+        } else if (number >= column + 1) {
             print("The column number is out of range (1 -$column)")
             continue
-        } else if (board[input.toInt() - 1].last() == 'o' || board[input.toInt() - 1].last() == '*') {
+        } else if (board[number - 1].last() == 'o' || board[number - 1].last() == '*') {
             println("The column is full")
             continue
         } else {
             for (i in 0 until board.size) {
-                for (j in 0 until board[i].size) {
-                    if (board[input.toInt() - 1][j] == ' ') {
-                        board[input.toInt() - 1][j] = piece;break
-
+                if (board[i][board[i].lastIndex] == ' ') {
+                    if (board[number - 1][i] == ' ') {
+                        board[number - 1][i] = piece
+                        break
                     }
                 }
             }
@@ -50,14 +50,10 @@ private fun move(player: String, piece: Char, board: MutableList<MutableList<Cha
         }
         break
     }
-
     return a
 }
 
-private fun createBoard(
-    regex: Regex, player1: String, player2: String
-) {
-
+private fun createBoard(regex: Regex, player1: String, player2: String) {
     while (true) {
         println("Set the board dimensions (Rows x Columns)")
         println("Press Enter for default (6 x 7)")
@@ -95,12 +91,12 @@ private fun createBoard(
                 continue
             }
         }
-        printBoard(player1, player2)
+
         break
     }
 }
 
-private fun printBoard(name1: String, name2: String) {
+private fun printBoard(name1: String, name2: String, board: MutableList<MutableList<Char>>) {
     println("$name1 VS $name2")
     println("$row X $column board")
     var count = 0
@@ -113,9 +109,10 @@ private fun printBoard(name1: String, name2: String) {
         println()
         for (j in 0..column) {
             print("║ ")
+            if (board[i][j] != ' ') {
+                print(board[i][j])
+            }
         }
-
-
     }
     print("\n╚═")
     repeat(column - 1) {
