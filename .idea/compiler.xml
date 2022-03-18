@@ -6,6 +6,7 @@
       <module name="Connect_Four.Connect_Four-task-build-reports-tests.main" target="15" />
       <module name="Connect_Four.Connect_Four-task-build-test-results.main" target="15" />
       <module name="Connect_Four.Connect_Four-task-build-tmp.main" target="15" />
+      <module name="Connect_Four.Connect_Four-task-out.main" target="15" />
       <module name="Connect_Four.Connect_Four-task.main" target="15" />
       <module name="Connect_Four.Topics-Declaring_functions-Comparing_sums.main" target="15" />
       <module name="Connect_Four.Topics-Declaring_functions-Get_last_digit.main" target="15" />
