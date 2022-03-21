@@ -22,6 +22,7 @@ fun main() {
         if (move(player1, 'o', board)) break
         if (move(player2, '*', board)) break
     }
+    println("Game Over!")
 }
 
 private fun move(
@@ -29,33 +30,31 @@ private fun move(
 ): Boolean {
     var a = false
 
-    loop@ while (true) {
-        println("$player's turn")
+    outer@ while (true) {
+        println("$player's turn:")
         val input = readln()
-        val number = input.toInt()
+        val number = input.toIntOrNull()
         if (input == "end") {
             a = true
-        } else if (input.contains("[0-$column]")) {
+        } else if (number == null) {
             println("Incorrect column number")
             continue
-        } else if (number >= column + 1) {
-            print("The column number is out of range (1 -$column)")
+        } else if (number < 1 || number > column) {
+            println("The column number is out of range (1 - $column)")
             continue
-        }
-        //need to add to end rather than front
-        else {
-
+        } else {
             for (i in row - 1 downTo 0) {
-                if (board[i][0] == ' ') {
+                if (board[number - 1][0] == ' ') {
                     if (board[number - 1][i] == ' ') {
                         board[number - 1][i] = piece
                         break
                     }
                 } else {
-                    println("The column is full")
-                    loop@ continue
+                    println("Column $number is full")
+                    continue@outer
                 }
             }
+
             printBoard(board)
             //  println(board)
         }
@@ -107,7 +106,6 @@ private fun createBoard(regex: Regex) {
                 continue
             }
         }
-
         break
     }
 }
