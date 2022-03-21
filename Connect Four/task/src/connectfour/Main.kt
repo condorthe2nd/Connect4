@@ -1,6 +1,5 @@
 package connectfour
 
-/* I don't think the modified version of board is getting passed to print*/
 var row = 6
 var column = 7
 
@@ -11,22 +10,27 @@ fun main() {
     val player1 = readln()
     println("Second player's name:")
     val player2 = readln()
+
     createBoard(regex)
-    var board = MutableList(column) { MutableList(row) { ' ' } }
-    printBoard(player1, player2, board)
+    var board = MutableList(column + 1) { MutableList(row + 1) { ' ' } }
+
+    println("$player1 VS $player2")
+    println("$row X $column board")
+    printBoard(board)
     //println("$row $column")
     while (true) {
-        if (move(player1, 'o', board, player1, player2)) break
-        if (move(player2, '*', board, player1, player2)) break
+        if (move(player1, 'o', board)) break
+        if (move(player2, '*', board)) break
     }
 }
 
 private fun move(
-    player: String, piece: Char, board: MutableList<MutableList<Char>>, player1: String, player2: String
+    player: String, piece: Char, board: MutableList<MutableList<Char>>
 ): Boolean {
     var a = false
-    println("$player's turn")
-    while (true) {
+
+    loop@ while (true) {
+        println("$player's turn")
         val input = readln()
         val number = input.toInt()
         if (input == "end") {
@@ -37,20 +41,23 @@ private fun move(
         } else if (number >= column + 1) {
             print("The column number is out of range (1 -$column)")
             continue
-        } else if (board[number - 1].last() == 'o' || board[number - 1].last() == '*') {
-            println("The column is full")
-            continue
-        } else {
-            for (i in 0..board.size) {
-                if (board[i][board[i].lastIndex] == ' ') {
+        }
+        //need to add to end rather than front
+        else {
+
+            for (i in row - 1 downTo 0) {
+                if (board[i][0] == ' ') {
                     if (board[number - 1][i] == ' ') {
                         board[number - 1][i] = piece
                         break
                     }
+                } else {
+                    println("The column is full")
+                    loop@ continue
                 }
             }
-            printBoard(player1, player2, board)
-            println(board)
+            printBoard(board)
+            //  println(board)
         }
         break
     }
@@ -63,22 +70,25 @@ private fun createBoard(regex: Regex) {
         println("Press Enter for default (6 x 7)")
         val line = readln()
         if (line.isEmpty()) {
-
+            //have added for clarification
+            row = 6
+            column = 7
         } else if (line == "end") {
             break
         } else {
             val new = line.replace("\\s".toRegex(), "").toCharArray()
             if (new.size > 3) {
-                val splitNumbers = line.replace("\\s".toRegex(), "")
-                    .split("x")
+                val splitNumbers = line.replace("\\s".toRegex(), "").split("x")
                 if (!regex.matches(new.joinToString(""))) {
                     print("Invalid input\n")
                     continue
                 }
                 if (splitNumbers[0].toInt() > 9) {
                     println("Board rows should be from 5 to 9")
+                    continue
                 } else if (splitNumbers[1].toInt() > 9) {
                     println("Board columns should be from 5 to 9")
+                    continue
                 }
                 continue
             }
@@ -103,30 +113,29 @@ private fun createBoard(regex: Regex) {
 }
 
 private fun printBoard(
-    name1: String, name2: String, board: MutableList<MutableList<Char>>
+    board: MutableList<MutableList<Char>>
 ) {
-    println("$name1 VS $name2")
-    println("$row X $column board")
+
     var count = 0
     print(" ")
     repeat(column) {
         count++
-        print("$count  ")
+        print("$count ")
     }
-    for (i in 0..row) {
+    for (i in 0 until row) {
         println()
         for (j in 0..column) {
 
-            if (board[i].size < i && board[i][j] != ' ') {
-                print("║${board[i][j]}* ")
+            if (j != column && i != row) {
+                print("║${board[j][i]}")
             } else {
-                print("║  ")
+                print("║ ")
             }
         }
     }
-    print("\n╚═")
+    print("\n╚")
     repeat(column - 1) {
-        print("═╩═")
+        print("═╩")
     }
     print("═╝\n")
 }
