@@ -4,32 +4,106 @@ var row = 6
 var column = 7
 
 fun main() {
+    play()
+}
+
+private fun play() {
+    //regex to check input
     val regex = Regex("""^\s*\d+\s*[xX]\s*\d+\s*$""")
+
     println("Connect Four")
+    //get first player name
     println("First player's name:")
     val player1 = readln()
+    //get second player name
     println("Second player's name:")
     val player2 = readln()
-
+    //instantiate board
     createBoard(regex)
-    var board = MutableList(column + 1) { MutableList(row + 1) { ' ' } }
+    //create array to store player moves
+    val board = MutableList(column) { MutableList(row) { ' ' } }
 
     println("$player1 VS $player2")
     println("$row X $column board")
+    //output board
     printBoard(board)
-    //println("$row $column")
+    //receive move input until player inputs "end"
     while (true) {
         if (move(player1, 'o', board)) break
+        if (checkWin(board, player1, player2)) break
         if (move(player2, '*', board)) break
+        if (checkWin(board, player1, player2)) break
     }
     println("Game Over!")
+}
+
+fun checkWin(board: MutableList<MutableList<Char>>, player1: String, player2: String): Boolean {
+    //check if board is full
+    if (!board.flatten().contains(' ')) {
+        println("It is a draw")
+        return true
+    }
+    //check horizontal
+    for (i in 0 until row) {
+        for (j in 0 until column - 3) {
+            if (board[j][i] == 'o' && board[j + 1][i] == 'o' && board[j + 2][i] == 'o' && board[j + 3][i] == 'o') {
+                println("Player $player1 won")
+                return true
+            }
+            if (board[j][i] == '*' && board[j + 1][i] == '*' && board[j + 2][i] == '*' && board[j + 3][i] == '*') {
+                println("Player $player2 won")
+                return true
+            }
+        }
+    }
+    //check vertical
+    for (i in 0 until row - 3) {
+        for (j in 0 until column) {
+            if (board[j][i] == 'o' && board[j][i + 1] == 'o' && board[j][i + 2] == 'o' && board[j][i + 3] == 'o') {
+                println("Player $player1 won")
+                return true
+            }
+            if (board[j][i] == '*' && board[j][i + 1] == '*' && board[j][i + 2] == '*' && board[j][i + 3] == '*') {
+                println("Player $player2 won")
+                return true
+            }
+        }
+    }
+    //check diagonal
+    for (i in 0 until row - 3) {
+        for (j in 0 until column - 3) {
+            if (board[j][i] == 'o' && board[j + 1][i + 1] == 'o' && board[j + 2][i + 2] == 'o' && board[j + 3][i + 3] == 'o') {
+                println("Player $player1 won")
+                return true
+            }
+            if (board[j][i] == '*' && board[j + 1][i + 1] == '*' && board[j + 2][i + 2] == '*' && board[j + 3][i + 3] == '*') {
+                println("Player $player2 won")
+                return true
+            }
+        }
+    }
+    //check diagonal
+    for (i in 0 until row - 3) {
+        for (j in 3 until column) {
+            if (board[j][i] == 'o' && board[j - 1][i + 1] == 'o' && board[j - 2][i + 2] == 'o' && board[j - 3][i + 3] == 'o') {
+                println("Player $player1 won")
+                return true
+            }
+            if (board[j][i] == '*' && board[j - 1][i + 1] == '*' && board[j - 2][i + 2] == '*' && board[j - 3][i + 3] == '*') {
+                println("Player $player2 won")
+                return true
+            }
+        }
+    }
+    return false
 }
 
 private fun move(
     player: String, piece: Char, board: MutableList<MutableList<Char>>
 ): Boolean {
+    //variable that's false if player inputs "end"
     var a = false
-
+    //receive move input
     outer@ while (true) {
         println("$player's turn:")
         val input = readln()
@@ -43,6 +117,7 @@ private fun move(
             println("The column number is out of range (1 - $column)")
             continue
         } else {
+            //enter the actual move
             for (i in row - 1 downTo 0) {
                 if (board[number - 1][0] == ' ') {
                     if (board[number - 1][i] == ' ') {
@@ -54,9 +129,7 @@ private fun move(
                     continue@outer
                 }
             }
-
             printBoard(board)
-            //  println(board)
         }
         break
     }
@@ -113,7 +186,6 @@ private fun createBoard(regex: Regex) {
 private fun printBoard(
     board: MutableList<MutableList<Char>>
 ) {
-
     var count = 0
     print(" ")
     repeat(column) {
@@ -123,7 +195,6 @@ private fun printBoard(
     for (i in 0 until row) {
         println()
         for (j in 0..column) {
-
             if (j != column && i != row) {
                 print("║${board[j][i]}")
             } else {
